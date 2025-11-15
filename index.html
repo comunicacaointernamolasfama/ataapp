@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AtaApp Admin Panel v2.1</title>
+    <title>AtaApp Admin Panel v2.2 (Final)</title>
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Supabase JS Client -->
@@ -23,7 +23,7 @@
             outline: none;
         }
         .input-style:focus {
-            ring: 2px; ring-color: #06B6D4;
+            box-shadow: 0 0 0 2px #06B6D4;
         }
     </style>
 </head>
@@ -71,7 +71,7 @@
                         <form id="add-client-form" class="space-y-3">
                             <input type="text" id="company-name" placeholder="Nome da Empresa" class="input-style" required>
                             <input type="url" id="logo-url" placeholder="URL da Logo" class="input-style">
-                            <div class="flex items-center gap-4"><label class="text-sm">Cor Primária:</label><input type="color" id="primary-color" value="#4A90E2" class="bg-gray-700"></div>
+                            <div class="flex items-center gap-4"><label class="text-sm">Cor Primária:</label><input type="color" id="primary-color" value="#4A90E2" class="bg-gray-700 rounded"></div>
                             <input type="text" id="gamma-theme-name" placeholder="Nome do Tema na Gamma" class="input-style" required>
                             <button type="submit" class="w-full text-white font-bold py-2 px-4 rounded-md transition duration-300 bg-cyan-600 hover:bg-cyan-700">Salvar Cliente</button>
                         </form>
@@ -116,9 +116,9 @@
     <div id="toast" class="toast"></div>
 
     <script>
-        // ===== CONFIGURATION =====
+        // ===== CONFIGURATION (CORRECTED) =====
         const SUPABASE_URL = 'https://pdqkvyxufnprapkgsvxx.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzIΙNiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkcWt2eXh1Zm5wcmFwa2dzdnh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMDE2MzAsImV4cCI6MjA3ODc3NzYzMH0.CFxmP1S8829joB6txKQ4bypp-Qr7SDHAg0P2Dgpti1k';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkcWt2eXh1Zm5wcmFwa2dzdnh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMDE2MzAsImV4cCI6MjA3ODc3NzYzMH0.CFxmP1S8829joB6txKQ4bypp-Qr7SDHAg0P2Dgpti1k';
 
         // ===== INITIALIZATION =====
         const { createClient } = supabase;
@@ -220,7 +220,7 @@
                 return `
                     <div class="bg-gray-700 p-4 rounded-md border border-gray-600">
                         <div class="flex items-center gap-3 mb-3">
-                            ${client.logo_url ? `<img src="${client.logo_url}" class="w-10 h-10 rounded-full object-cover bg-white">` : `<div class="w-10 h-10 rounded-full bg-gray-500 flex items-center justify-center text-lg font-bold">${client.company_name.charAt(0)}</div>`}
+                            ${client.logo_url ? `<img src="${client.logo_url}" alt="${client.company_name}" class="w-10 h-10 rounded-full object-cover bg-white">` : `<div class="w-10 h-10 rounded-full bg-gray-500 flex items-center justify-center text-lg font-bold">${client.company_name.charAt(0)}</div>`}
                             <h3 class="text-lg font-bold">${client.company_name}</h3>
                         </div>
                         <div class="text-sm text-gray-400 space-y-3 pl-2 border-l-2 border-gray-500 ml-4">
@@ -258,7 +258,8 @@
         });
 
         document.getElementById('logout-button').addEventListener('click', async () => {
-            await supabaseClient.auth.signOut();
+            const { error } = await supabaseClient.auth.signOut();
+            if(error) { showToast('Erro ao sair.', 'error'); }
             await checkUserSession();
         });
         
