@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AtaApp Admin Panel v3.4</title>
+    <title>AtaApp Admin Panel v3.5</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -28,8 +28,12 @@
         }
         .modal-content.open { opacity: 1; transform: translate(-50%, -50%); pointer-events: auto; }
 
-        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-        .accordion-content.open { max-height: 1000px; }
+        .accordion-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out;
+        }
+        .accordion-content.open {
+            max-height: 1000px;
+        }
         .rotate-180 { transform: rotate(180deg); }
         .input-style {
             width: 100%; padding: 0.5rem 0.75rem; background-color: #374151;
@@ -275,20 +279,17 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             document.body.addEventListener('click', (e) => {
-                const targetButton = e.target.closest('button');
-                if (!targetButton) return;
-
-                const accordionHeader = targetButton.closest('.accordion-header');
-                if (accordionHeader && !targetButton.matches('.edit-btn, .delete-btn')) {
+                const accordionHeader = e.target.closest('.accordion-header');
+                if (accordionHeader && !e.target.closest('button')) {
                     const content = accordionHeader.nextElementSibling;
                     content.classList.toggle('open');
                     accordionHeader.querySelector('svg').classList.toggle('rotate-180');
                     return;
                 }
                 
-                if (targetButton.matches('.edit-btn')) {
-                    const id = targetButton.dataset.id;
-                    const table = targetButton.dataset.table;
+                if (e.target.matches('.edit-btn')) {
+                    const id = e.target.dataset.id;
+                    const table = e.target.dataset.table;
                     
                     if (table === 'clients') {
                         const client = allData.clients.find(c => c.id === id);
@@ -329,14 +330,13 @@
                     return;
                 }
                 
-                if (targetButton.matches('.delete-btn')) {
-                    handleDelete(targetButton.dataset.id, targetButton.dataset.table);
+                if (e.target.matches('.delete-btn')) {
+                    handleDelete(e.target.dataset.id, e.target.dataset.table);
                     return;
                 }
-                
-                if(targetButton.matches('.cancel-button, .close-modal-btn')) {
-                    closeModal(targetButton.closest('.modal-container'));
-                    return;
+
+                if (e.target.matches('.cancel-button, .close-modal-btn')) {
+                    closeModal(e.target.closest('.modal-container'));
                 }
             });
             
