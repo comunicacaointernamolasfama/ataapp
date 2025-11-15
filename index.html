@@ -3,31 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AtaApp Admin Panel</title>
-    <!-- Tailwind CSS via CDN for rapid styling -->
+    <title>AtaApp Admin Panel v2</title>
+    <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Simple toast notification style */
         .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 24px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 500;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-            z-index: 1000;
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            padding: 12px 24px; border-radius: 8px; color: white; font-weight: 500;
+            opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; z-index: 1000;
         }
-        .toast.show {
-            opacity: 1;
-            visibility: visible;
-        }
+        .toast.show { opacity: 1; visibility: visible; }
         .toast.success { background-color: #28a745; }
         .toast.error { background-color: #dc3545; }
     </style>
@@ -39,76 +26,80 @@
         <!-- ===== LOGIN VIEW ===== -->
         <div id="login-view">
             <div class="w-full max-w-md bg-gray-800 p-8 rounded-lg shadow-lg border border-gray-700">
-                <div class="text-center mb-8">
-                    <h1 class="text-3xl font-bold text-cyan-400">AtaApp Admin</h1>
-                    <p class="text-gray-400 mt-2">Painel de Gerenciamento</p>
-                </div>
-                <form id="login-form">
-                    <div class="mb-4">
-                        <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
-                        <input type="email" id="email" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
-                    </div>
-                    <div class="mb-6">
-                        <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Senha</label>
-                        <input type="password" id="password" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
-                    </div>
+                <h1 class="text-3xl text-center font-bold text-cyan-400 mb-8">AtaApp Admin</h1>
+                <form id="login-form" class="space-y-4">
+                    <input type="email" id="email" placeholder="Email" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
+                    <input type="password" id="password" placeholder="Senha" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500" required>
                     <button type="submit" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-md transition duration-300">Entrar</button>
-                    <p id="login-error" class="text-red-400 text-sm mt-4 text-center"></p>
+                    <p id="login-error" class="text-red-400 text-sm mt-2 text-center"></p>
                 </form>
             </div>
         </div>
 
         <!-- ===== DASHBOARD VIEW (Hidden by default) ===== -->
-        <div id="dashboard-view" class="hidden w-full max-w-7xl">
-            <header class="flex justify-between items-center mb-8 p-4 bg-gray-800 rounded-lg border border-gray-700">
+        <div id="dashboard-view" class="hidden w-full max-w-screen-xl">
+            <header class="flex justify-between items-center mb-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
                 <h1 class="text-2xl font-bold text-cyan-400">Dashboard AtaApp</h1>
                 <div>
                     <span id="user-email" class="text-gray-400 mr-4"></span>
-                    <button id="logout-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition duration-300">Sair</button>
+                    <button id="logout-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded-md text-sm transition duration-300">Sair</button>
                 </div>
             </header>
 
-            <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Forms Section -->
-                <div class="flex flex-col gap-8">
-                    <!-- Add New Client Form -->
-                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
-                        <h2 class="text-xl font-semibold mb-4 border-b border-gray-600 pb-2">Cadastrar Novo Cliente</h2>
-                        <form id="add-client-form" class="space-y-4">
-                            <input type="text" id="company-name" placeholder="Nome da Empresa" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md" required>
-                            <input type="url" id="logo-url" placeholder="URL da Logo" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md">
-                            <div class="flex items-center gap-4">
-                               <label for="primary-color" class="text-sm">Cor Primária:</label>
-                               <input type="color" id="primary-color" value="#4A90E2" class="bg-gray-700 border-none rounded-md">
-                            </div>
-                            <input type="text" id="elevenlabs-voice-id" placeholder="ElevenLabs Voice ID" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md" required>
-                            <input type="text" id="gamma-theme-name" placeholder="Nome do Tema na Gamma" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md" required>
-                            <button type="submit" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-md transition duration-300">Salvar Cliente</button>
+            <main class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <!-- Coluna 1: Clientes e Usuários -->
+                <section class="xl:col-span-2 flex flex-col gap-6">
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                        <h2 class="text-xl font-semibold mb-4">Clientes e Usuários</h2>
+                        <div id="clients-list" class="space-y-6 max-h-[80vh] overflow-y-auto pr-2"></div>
+                    </div>
+                </section>
+
+                <!-- Coluna 2: Formulários de Ação -->
+                <section class="flex flex-col gap-6">
+                    <!-- Gerenciar Clientes -->
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                        <h2 class="text-xl font-semibold mb-4">Gerenciar Clientes</h2>
+                        <form id="add-client-form" class="space-y-3">
+                            <input type="text" id="company-name" placeholder="Nome da Empresa" class="input-style" required>
+                            <input type="url" id="logo-url" placeholder="URL da Logo" class="input-style">
+                            <div class="flex items-center gap-4"><label class="text-sm">Cor Primária:</label><input type="color" id="primary-color" value="#4A90E2" class="bg-gray-700"></div>
+                            <input type="text" id="gamma-theme-name" placeholder="Nome do Tema na Gamma" class="input-style" required>
+                            <button type="submit" class="w-full button-style bg-cyan-600 hover:bg-cyan-700">Salvar Cliente</button>
                         </form>
                     </div>
-
-                    <!-- Add Authorized User Form -->
-                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
-                        <h2 class="text-xl font-semibold mb-4 border-b border-gray-600 pb-2">Adicionar Usuário Autorizado</h2>
-                        <form id="add-user-form" class="space-y-4">
-                            <select id="client-select" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md" required>
-                                <option value="">Selecione um Cliente...</option>
-                            </select>
-                            <input type="text" id="user-name" placeholder="Nome do Usuário (Opcional)" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md">
-                            <input type="text" id="user-telegram-id" placeholder="ID do Telegram do Usuário" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md" required>
-                            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-300">Adicionar Usuário</button>
+                    <!-- Gerenciar Usuários Autorizados -->
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                        <h2 class="text-xl font-semibold mb-4">Gerenciar Usuários</h2>
+                        <form id="add-user-form" class="space-y-3">
+                            <select id="user-client-select" class="input-style" required><option value="">Selecione um Cliente...</option></select>
+                            <input type="text" id="user-telegram-id" placeholder="ID do Telegram do Usuário" class="input-style" required>
+                            <input type="text" id="user-name" placeholder="Nome (Opcional)" class="input-style">
+                            <button type="submit" class="w-full button-style bg-green-600 hover:bg-green-700">Adicionar Usuário</button>
                         </form>
                     </div>
-                </div>
-
-                <!-- Display Section -->
-                <div class="bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700">
-                    <h2 class="text-xl font-semibold mb-4 border-b border-gray-600 pb-2">Clientes e Usuários Cadastrados</h2>
-                    <div id="clients-list" class="space-y-6 max-h-[70vh] overflow-y-auto pr-2">
-                        <!-- Content will be generated by JS -->
-                        <p class="text-gray-500">Nenhum cliente cadastrado ainda.</p>
+                     <!-- Gerenciar Vozes Padrão -->
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                        <h2 class="text-xl font-semibold mb-4">Gerenciar Vozes Padrão</h2>
+                         <div id="standard-voices-list" class="mb-4 text-sm text-gray-400 space-y-1"></div>
+                        <form id="add-standard-voice-form" class="space-y-3">
+                            <input type="text" id="std-voice-name" placeholder="Nome da Voz (Ex: Narrador Calmo)" class="input-style" required>
+                            <input type="text" id="std-voice-id" placeholder="ID da Voz (ElevenLabs)" class="input-style" required>
+                            <input type="number" id="std-display-order" placeholder="Ordem de Exibição (1, 2, ...)" class="input-style" required>
+                            <button type="submit" class="w-full button-style bg-purple-600 hover:bg-purple-700">Adicionar Voz Padrão</button>
+                        </form>
                     </div>
-                </div>
+                    <!-- Gerenciar Vozes Customizadas -->
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                        <h2 class="text-xl font-semibold mb-4">Vozes Personalizadas (Premium)</h2>
+                        <form id="add-custom-voice-form" class="space-y-3">
+                            <select id="custom-voice-client-select" class="input-style" required><option value="">Selecione um Cliente...</option></select>
+                            <input type="text" id="custom-voice-name" placeholder="Nome da Voz (Ex: Voz do Diretor)" class="input-style" required>
+                            <input type="text" id="custom-voice-id" placeholder="ID da Voz Clonada (ElevenLabs)" class="input-style" required>
+                            <button type="submit" class="w-full button-style bg-yellow-600 hover:bg-yellow-700">Adicionar Voz Premium</button>
+                        </form>
+                    </div>
+                </section>
             </main>
         </div>
     </div>
@@ -117,41 +108,44 @@
     <div id="toast" class="toast"></div>
 
     <script>
+        // Apply common classes via script to avoid repetition in HTML
+        tailwind.config = { theme: { extend: {
+            // you can extend tailwind here if needed
+        }}};
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.input-style').forEach(el => {
+                el.classList.add('w-full', 'px-3', 'py-2', 'bg-gray-700', 'border', 'border-gray-600', 'rounded-md', 'focus:outline-none', 'focus:ring-2', 'focus:ring-cyan-500');
+            });
+             document.querySelectorAll('.button-style').forEach(el => {
+                el.classList.add('text-white', 'font-bold', 'py-2', 'px-4', 'rounded-md', 'transition', 'duration-300');
+            });
+        });
+
         // ===== CONFIGURATION =====
         const SUPABASE_URL = 'https://pdqkvyxufnprapkgsvxx.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkcWt2eXh1Zm5wcmFwa2dzdnh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMDE2MzAsImV4cCI6MjA3ODc3NzYzMH0.CFxmP1S8829joB6txKQ4bypp-Qr7SDHAg0P2Dgpti1k';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkcWt2eXh1Zm5wcmFwa2dzdnh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMDE2MzAsImV4cCI6MjA3ODc7NzYzMH0.CFxmP1S8829joB6txKQ4bypp-Qr7SDHAg0P2Dgpti1k';
 
-        // ===== INITIALIZATION =====
         const { createClient } = supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ===== DOM ELEMENT REFERENCES =====
+        // ===== DOM REFERENCES =====
         const loginView = document.getElementById('login-view');
         const dashboardView = document.getElementById('dashboard-view');
-        const loginForm = document.getElementById('login-form');
-        const loginError = document.getElementById('login-error');
         const userEmailSpan = document.getElementById('user-email');
-        const logoutButton = document.getElementById('logout-button');
-        const addClientForm = document.getElementById('add-client-form');
-        const addUserForm = document.getElementById('add-user-form');
-        const clientSelect = document.getElementById('client-select');
-        const clientsListDiv = document.getElementById('clients-list');
         const toastElement = document.getElementById('toast');
-        
+        const clientsListDiv = document.getElementById('clients-list');
+        const standardVoicesListDiv = document.getElementById('standard-voices-list');
+        const userClientSelect = document.getElementById('user-client-select');
+        const customVoiceClientSelect = document.getElementById('custom-voice-client-select');
+
         // ===== UTILITY FUNCTIONS =====
         const showToast = (message, type = 'success') => {
             toastElement.textContent = message;
             toastElement.className = `toast show ${type}`;
-            setTimeout(() => {
-                toastElement.className = 'toast';
-            }, 3000);
+            setTimeout(() => { toastElement.className = 'toast'; }, 3000);
         };
 
-        // ===== CORE FUNCTIONS =====
-
-        /**
-         * Checks the current user session and updates the UI accordingly.
-         */
+        // ===== CORE LOGIC =====
         const checkUserSession = async () => {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
@@ -165,160 +159,204 @@
             }
         };
 
-        /**
-         * Fetches all data from Supabase and renders the dashboard.
-         */
         const loadDashboardData = async () => {
-            clientsListDiv.innerHTML = '<p class="text-gray-500">Carregando dados...</p>';
+            clientsListDiv.innerHTML = `<p class="text-gray-500">Carregando...</p>`;
             
-            const { data: clients, error: clientsError } = await supabaseClient.from('clients').select('*').order('company_name');
-            const { data: users, error: usersError } = await supabaseClient.from('authorized_users').select('*');
+            const [clientsRes, usersRes, stdVoicesRes, customVoicesRes] = await Promise.all([
+                supabaseClient.from('clients').select('*').order('company_name'),
+                supabaseClient.from('authorized_users').select('*'),
+                supabaseClient.from('standard_voices').select('*').order('display_order'),
+                supabaseClient.from('custom_voices').select('*')
+            ]);
 
-            if (clientsError || usersError) {
-                showToast('Erro ao carregar dados.', 'error');
-                console.error('Error fetching data:', clientsError || usersError);
-                clientsListDiv.innerHTML = '<p class="text-red-400">Falha ao carregar dados.</p>';
+            const { data: clients, error: clientsError } = clientsRes;
+            const { data: users, error: usersError } = usersRes;
+            const { data: stdVoices, error: stdVoicesError } = stdVoicesRes;
+            const { data: customVoices, error: customVoicesError } = customVoicesRes;
+            
+            if (clientsError || usersError || stdVoicesError || customVoicesError) {
+                const errorMsg = 'Erro ao carregar dados do painel.';
+                showToast(errorMsg, 'error');
+                console.error(clientsError || usersError || stdVoicesError || customVoicesError);
+                clientsListDiv.innerHTML = `<p class="text-red-400">${errorMsg}</p>`;
                 return;
             }
 
-            renderClients(clients, users);
-            populateClientSelect(clients);
+            renderDashboard(clients, users, stdVoices, customVoices);
+            populateClientSelects(clients);
         };
 
-        /**
-         * Populates the client dropdown for the "Add User" form.
-         * @param {Array} clients - Array of client objects from Supabase.
-         */
-        const populateClientSelect = (clients) => {
-            clientSelect.innerHTML = '<option value="">Selecione um Cliente...</option>';
-            clients.forEach(client => {
-                const option = document.createElement('option');
-                option.value = client.id;
-                option.textContent = client.company_name;
-                clientSelect.appendChild(option);
+        const populateClientSelects = (clients) => {
+            const selects = [userClientSelect, customVoiceClientSelect];
+            selects.forEach(select => {
+                select.innerHTML = '<option value="">Selecione um Cliente...</option>';
+                clients.forEach(client => {
+                    const option = document.createElement('option');
+                    option.value = client.id;
+                    option.textContent = client.company_name;
+                    select.appendChild(option);
+                });
             });
         };
 
-        /**
-         * Renders the list of clients and their authorized users.
-         * @param {Array} clients - Array of client objects.
-         * @param {Array} users - Array of authorized user objects.
-         */
-        const renderClients = (clients, users) => {
+        const renderDashboard = (clients, users, stdVoices, customVoices) => {
+            // Render Standard Voices
+            standardVoicesListDiv.innerHTML = stdVoices.length > 0
+                ? stdVoices.map(v => `<div>${v.display_order}. ${v.voice_name}</div>`).join('')
+                : '<p>Nenhuma voz padrão cadastrada.</p>';
+
+            // Render Clients and their related data
             if (clients.length === 0) {
-                clientsListDiv.innerHTML = '<p class="text-gray-500">Nenhum cliente cadastrado ainda.</p>';
+                clientsListDiv.innerHTML = '<p class="text-gray-500">Nenhum cliente cadastrado.</p>';
                 return;
             }
 
-            clientsListDiv.innerHTML = '';
-            clients.forEach(client => {
+            clientsListDiv.innerHTML = clients.map(client => {
                 const clientUsers = users.filter(user => user.client_id === client.id);
-                
-                const clientCard = document.createElement('div');
-                clientCard.className = 'bg-gray-700 p-4 rounded-md border border-gray-600';
-                
-                clientCard.innerHTML = `
-                    <div class="flex items-center gap-4 mb-3">
-                        ${client.logo_url ? `<img src="${client.logo_url}" alt="${client.company_name} logo" class="w-10 h-10 rounded-full object-cover bg-white">` : `<div class="w-10 h-10 rounded-full bg-gray-500 flex items-center justify-center text-lg font-bold">${client.company_name.charAt(0)}</div>`}
-                        <h3 class="text-lg font-bold">${client.company_name}</h3>
-                        <div class="w-6 h-6 rounded-full border border-white" style="background-color: ${client.primary_color_hex};"></div>
-                    </div>
-                    <div class="text-sm text-gray-400 space-y-2 pl-2 border-l-2 border-gray-500 ml-4">
-                        <p><strong>Tema Gamma:</strong> ${client.gamma_theme_name}</p>
-                        <p><strong>Voz ElevenLabs:</strong> ${client.elevenlabs_voice_id}</p>
-                        <h4 class="font-semibold text-gray-300 pt-2">Usuários Autorizados (${clientUsers.length}):</h4>
-                        <ul id="user-list-${client.id}" class="list-disc list-inside">
-                           ${clientUsers.length === 0 ? '<li class="text-gray-500">Nenhum usuário</li>' : ''}
-                        </ul>
+                const clientCustomVoices = customVoices.filter(voice => voice.client_id === client.id);
+
+                const usersHtml = clientUsers.length > 0
+                    ? clientUsers.map(u => `<li>${u.user_name || 'Usuário sem nome'} - ID: ${u.user_telegram_id}</li>`).join('')
+                    : '<li class="text-gray-500">Nenhum usuário</li>';
+
+                const voicesHtml = clientCustomVoices.length > 0
+                    ? clientCustomVoices.map(v => `<li>${v.voice_name}</li>`).join('')
+                    : '<li class="text-gray-500">Nenhuma voz premium</li>';
+
+                return `
+                    <div class="bg-gray-700 p-4 rounded-md border border-gray-600">
+                        <div class="flex items-center gap-3 mb-3">
+                            ${client.logo_url ? `<img src="${client.logo_url}" class="w-10 h-10 rounded-full object-cover bg-white">` : `<div class="w-10 h-10 rounded-full bg-gray-500 flex items-center justify-center text-lg font-bold">${client.company_name.charAt(0)}</div>`}
+                            <h3 class="text-lg font-bold">${client.company_name}</h3>
+                        </div>
+                        <div class="text-sm text-gray-400 space-y-3 pl-2 border-l-2 border-gray-500 ml-4">
+                            <div><strong>Tema Gamma:</strong> ${client.gamma_theme_name}</div>
+                            <div>
+                                <h4 class="font-semibold text-gray-300">Usuários Autorizados:</h4>
+                                <ul class="list-disc list-inside">${usersHtml}</ul>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-300">Vozes Premium:</h4>
+                                <ul class="list-disc list-inside">${voicesHtml}</ul>
+                            </div>
+                        </div>
                     </div>
                 `;
-                
-                const userList = clientCard.querySelector(`#user-list-${client.id}`);
-                clientUsers.forEach(user => {
-                    const userItem = document.createElement('li');
-                    userItem.textContent = `${user.user_name ? user.user_name + ' - ' : ''}ID: ${user.user_telegram_id}`;
-                    userList.appendChild(userItem);
-                });
-
-                clientsListDiv.appendChild(clientCard);
-            });
+            }).join('');
         };
 
         // ===== EVENT LISTENERS =====
-
-        // Handle Login
-        loginForm.addEventListener('submit', async (e) => {
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            loginError.textContent = '';
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-
             const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
-            if (error) {
-                loginError.textContent = 'Email ou senha inválidos.';
-                console.error('Login error:', error);
-            } else {
-                loginForm.reset();
-                await checkUserSession();
-            }
+            if (error) { document.getElementById('login-error').textContent = 'Credenciais inválidas.'; } 
+            else { await checkUserSession(); }
         });
 
-        // Handle Logout
-        logoutButton.addEventListener('click', async () => {
+        document.getElementById('logout-button').addEventListener('click', async () => {
             await supabaseClient.auth.signOut();
             await checkUserSession();
         });
+
+        const setupFormSubmit = (formId, tableName, successMessage, errorMessage) => {
+            document.getElementById(formId).addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const newRecord = Object.fromEntries(formData.entries());
+                // Convert empty strings to null for optional fields
+                for(const key in newRecord) { if(newRecord[key] === '') newRecord[key] = null; }
+
+                const { error } = await supabaseClient.from(tableName).insert([newRecord]);
+                if (error) {
+                    showToast(errorMessage, 'error');
+                    console.error(`Error inserting into ${tableName}:`, error);
+                } else {
+                    showToast(successMessage);
+                    e.target.reset();
+                    await loadDashboardData();
+                }
+            });
+        };
         
-        // Handle Add Client
-        addClientForm.addEventListener('submit', async (e) => {
+        // This is a more advanced way to handle forms to avoid repeating code.
+        // It uses name attributes on the inputs to match the database columns.
+        // We'll revert to the simple way if this is confusing. Let's build the HTML with name attributes.
+        
+        const createFormHandler = (formId, tableName, successMessage) => {
+            document.getElementById(formId).addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const formData = new FormData(form);
+                const newRecord = {};
+                formData.forEach((value, key) => { newRecord[key] = value || null });
+                
+                const { error } = await supabaseClient.from(tableName).insert([newRecord]);
+                
+                if (error) {
+                    showToast(`Erro ao salvar em ${tableName}.`, 'error');
+                    console.error(`Error on ${tableName}:`, error);
+                } else {
+                    showToast(successMessage);
+                    form.reset();
+                    await loadDashboardData();
+                }
+            });
+        };
+
+        // Simpler, more explicit way:
+        document.getElementById('add-client-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const newClient = {
+            const record = {
                 company_name: document.getElementById('company-name').value,
                 logo_url: document.getElementById('logo-url').value || null,
                 primary_color_hex: document.getElementById('primary-color').value,
-                elevenlabs_voice_id: document.getElementById('elevenlabs-voice-id').value,
-                gamma_theme_name: document.getElementById('gamma-theme-name').value
+                gamma_theme_name: document.getElementById('gamma-theme-name').value,
             };
-
-            const { error } = await supabaseClient.from('clients').insert([newClient]);
-
-            if (error) {
-                showToast('Erro ao salvar cliente.', 'error');
-                console.error('Insert client error:', error);
-            } else {
-                showToast('Cliente salvo com sucesso!');
-                addClientForm.reset();
-                await loadDashboardData();
-            }
+            const { error } = await supabaseClient.from('clients').insert([record]);
+            if(error) { showToast('Erro ao salvar cliente', 'error'); console.error(error); }
+            else { showToast('Cliente salvo!'); e.target.reset(); await loadDashboardData(); }
         });
-
-        // Handle Add User
-        addUserForm.addEventListener('submit', async (e) => {
+        
+        document.getElementById('add-user-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const newUser = {
-                client_id: document.getElementById('client-select').value,
+            const record = {
+                client_id: document.getElementById('user-client-select').value,
+                user_telegram_id: document.getElementById('user-telegram-id').value,
                 user_name: document.getElementById('user-name').value || null,
-                user_telegram_id: document.getElementById('user-telegram-id').value
             };
-
-            const { error } = await supabaseClient.from('authorized_users').insert([newUser]);
-            
-            if (error) {
-                showToast('Erro ao adicionar usuário.', 'error');
-                console.error('Insert user error:', error);
-            } else {
-                showToast('Usuário adicionado com sucesso!');
-                addUserForm.reset();
-                await loadDashboardData();
-            }
+            const { error } = await supabaseClient.from('authorized_users').insert([record]);
+            if(error) { showToast('Erro ao salvar usuário', 'error'); console.error(error); }
+            else { showToast('Usuário salvo!'); e.target.reset(); await loadDashboardData(); }
         });
 
+        document.getElementById('add-standard-voice-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const record = {
+                voice_name: document.getElementById('std-voice-name').value,
+                voice_id: document.getElementById('std-voice-id').value,
+                display_order: document.getElementById('std-display-order').value,
+            };
+            const { error } = await supabaseClient.from('standard_voices').insert([record]);
+            if(error) { showToast('Erro ao salvar voz padrão', 'error'); console.error(error); }
+            else { showToast('Voz padrão salva!'); e.target.reset(); await loadDashboardData(); }
+        });
+
+        document.getElementById('add-custom-voice-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const record = {
+                client_id: document.getElementById('custom-voice-client-select').value,
+                voice_name: document.getElementById('custom-voice-name').value,
+                voice_id: document.getElementById('custom-voice-id').value,
+            };
+            const { error } = await supabaseClient.from('custom_voices').insert([record]);
+            if(error) { showToast('Erro ao salvar voz premium', 'error'); console.error(error); }
+            else { showToast('Voz premium salva!'); e.target.reset(); await loadDashboardData(); }
+        });
 
         // ===== INITIAL LOAD =====
         document.addEventListener('DOMContentLoaded', checkUserSession);
-
     </script>
-
 </body>
 </html>
