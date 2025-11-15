@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AtaApp Admin Panel v3.2</title>
+    <title>AtaApp Admin Panel v3.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -15,39 +15,28 @@
         .toast.show { opacity: 1; visibility: visible; }
         .toast.success { background-color: #28a745; }
         .toast.error { background-color: #dc3545; }
-
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.7); z-index: 40;
             opacity: 0; transition: opacity 0.2s ease-in-out; pointer-events: none;
         }
         .modal-overlay.open { opacity: 1; pointer-events: auto; }
-        
         .modal-content {
             position: fixed; top: 50%; left: 50%; z-index: 50;
             opacity: 0; transform: translate(-50%, -40%); transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; pointer-events: none;
         }
         .modal-content.open { opacity: 1; transform: translate(-50%, -50%); pointer-events: auto; }
-
-        .accordion-content {
-            max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out;
-        }
-        .accordion-content.open {
-            max-height: 1000px;
-        }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .accordion-content.open { max-height: 1000px; }
         .rotate-180 { transform: rotate(180deg); }
         .input-style {
             width: 100%; padding: 0.5rem 0.75rem; background-color: #374151;
             border: 1px solid #4B5563; border-radius: 0.375rem; outline: none;
-        }
-        .input-style:focus {
-            box-shadow: 0 0 0 2px #06B6D4;
         }
     </style>
 </head>
 <body class="bg-gray-900 text-white font-sans antialiased">
 
     <div id="app-container" class="min-h-screen p-4 md:p-8">
-
         <!-- ===== LOGIN VIEW ===== -->
         <div id="login-view" class="flex flex-col items-center justify-center min-h-screen">
             <div class="w-full max-w-md bg-gray-800 p-8 rounded-lg shadow-lg border border-gray-700">
@@ -70,17 +59,12 @@
                     <button id="logout-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded-md text-sm transition duration-300">Sair</button>
                 </div>
             </header>
-
             <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Coluna da Esquerda: Lista de Clientes (Acordeão) -->
                 <section class="lg:col-span-2 bg-gray-800 p-6 rounded-lg border border-gray-700">
                     <h2 class="text-xl font-semibold mb-4">Clientes e Usuários</h2>
                     <div id="clients-list" class="space-y-4 max-h-[80vh] overflow-y-auto pr-2"></div>
                 </section>
-
-                <!-- Coluna da Direita: Formulários -->
                 <section class="flex flex-col gap-8">
-                    <!-- Gerenciar Clientes -->
                     <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
                         <h2 class="text-xl font-semibold mb-4">Gerenciar Clientes</h2>
                         <form id="add-client-form" class="space-y-3">
@@ -91,7 +75,6 @@
                             <button type="submit" class="w-full text-white font-bold py-2 px-4 rounded-md transition duration-300 bg-cyan-600 hover:bg-cyan-700">Salvar Cliente</button>
                         </form>
                     </div>
-                    <!-- Gerenciar Usuários -->
                     <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
                         <h2 class="text-xl font-semibold mb-4">Gerenciar Usuários</h2>
                         <form id="add-user-form" class="space-y-3">
@@ -101,7 +84,6 @@
                             <button type="submit" class="w-full text-white font-bold py-2 px-4 rounded-md transition duration-300 bg-green-600 hover:bg-green-700">Adicionar Usuário</button>
                         </form>
                     </div>
-                    <!-- Gerenciar Vozes -->
                     <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
                         <h2 class="text-xl font-semibold mb-4">Gerenciar Vozes</h2>
                          <div id="voices-tabs" class="flex border-b border-gray-600 mb-4">
@@ -131,43 +113,15 @@
         </div>
     </div>
     
-    <!-- Modal para Editar Cliente -->
-    <div id="edit-client-modal" class="hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-content bg-gray-800 p-6 rounded-lg w-full max-w-md border border-gray-600">
-            <h2 class="text-xl font-semibold mb-4">Editar Cliente</h2>
-            <form id="edit-client-form" class="space-y-4">
-                <input type="hidden" id="edit-client-id">
-                <div>
-                    <label for="edit-company-name" class="block text-sm font-medium text-gray-300 mb-1">Nome da Empresa</label>
-                    <input type="text" id="edit-company-name" class="input-style" required>
-                </div>
-                <div>
-                    <label for="edit-logo-url" class="block text-sm font-medium text-gray-300 mb-1">URL da Logo</label>
-                    <input type="url" id="edit-logo-url" class="input-style">
-                </div>
-                <div>
-                    <label for="edit-gamma-theme-name" class="block text-sm font-medium text-gray-300 mb-1">Nome do Tema na Gamma</label>
-                    <input type="text" id="edit-gamma-theme-name" class="input-style" required>
-                </div>
-                <div class="flex items-center gap-4"><label class="text-sm">Cor Primária:</label><input type="color" id="edit-primary-color" class="bg-gray-700 rounded"></div>
-                <div class="flex justify-end gap-4 mt-6">
-                    <button type="button" class="cancel-button px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded transition">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 rounded transition">Salvar Alterações</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <div id="edit-client-modal" class="hidden modal-container"><div class="modal-overlay"></div><div class="modal-content bg-gray-800 p-6 rounded-lg w-full max-w-md border border-gray-600"><h2 class="text-xl font-semibold mb-4">Editar Cliente</h2><form id="edit-client-form" class="space-y-4"><input type="hidden" id="edit-client-id"><div><label for="edit-company-name" class="block text-sm font-medium text-gray-300 mb-1">Nome da Empresa</label><input type="text" id="edit-company-name" class="input-style" required></div><div><label for="edit-logo-url" class="block text-sm font-medium text-gray-300 mb-1">URL da Logo</label><input type="url" id="edit-logo-url" class="input-style"></div><div><label for="edit-gamma-theme-name" class="block text-sm font-medium text-gray-300 mb-1">Nome do Tema na Gamma</label><input type="text" id="edit-gamma-theme-name" class="input-style" required></div><div class="flex items-center gap-4"><label class="text-sm">Cor Primária:</label><input type="color" id="edit-primary-color" class="bg-gray-700 rounded"></div><div class="flex justify-end gap-4 mt-6"><button type="button" class="cancel-button px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded transition">Cancelar</button><button type="submit" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 rounded transition">Salvar Alterações</button></div></form></div></div>
+    <div id="edit-user-modal" class="hidden modal-container"><div class="modal-overlay"></div><div class="modal-content bg-gray-800 p-6 rounded-lg w-full max-w-md border border-gray-600"><h2 class="text-xl font-semibold mb-4">Editar Usuário Autorizado</h2><form id="edit-user-form" class="space-y-4"><input type="hidden" id="edit-user-id"><div><label for="edit-user-name" class="block text-sm font-medium text-gray-300 mb-1">Nome do Usuário</label><input type="text" id="edit-user-name" class="input-style"></div><div><label for="edit-user-telegram-id" class="block text-sm font-medium text-gray-300 mb-1">ID do Telegram</label><input type="text" id="edit-user-telegram-id" class="input-style" required></div><div class="flex justify-end gap-4 mt-6"><button type="button" class="cancel-button px-4 py-2 bg-gray-600 rounded">Cancelar</button><button type="submit" class="px-4 py-2 bg-cyan-600 rounded">Salvar Alterações</button></div></form></div></div>
+    <div id="edit-voice-modal" class="hidden modal-container"><div class="modal-overlay"></div><div class="modal-content bg-gray-800 p-6 rounded-lg w-full max-w-md border border-gray-600"><h2 class="text-xl font-semibold mb-4">Editar Voz</h2><form id="edit-voice-form" class="space-y-4"><input type="hidden" id="edit-voice-id"><input type="hidden" id="edit-voice-table"><_div><label for="edit-voice-name" class="block text-sm font-medium text-gray-300 mb-1">Nome da Voz</label><input type="text" id="edit-voice-name" class="input-style" required></div><div><label for="edit-voice-id-field" class="block text-sm font-medium text-gray-300 mb-1">ID da Voz (ElevenLabs)</label><input type="text" id="edit-voice-id-field" class="input-style" required></div><div id="edit-voice-order-container" class="hidden"><label for="edit-display-order" class="block text-sm font-medium text-gray-300 mb-1">Ordem de Exibição</label><input type="number" id="edit-display-order" class="input-style"></div><div class="flex justify-end gap-4 mt-6"><button type="button" class="cancel-button px-4 py-2 bg-gray-600 rounded">Cancelar</button><button type="submit" class="px-4 py-2 bg-cyan-600 rounded">Salvar Alterações</button></div></form></div></div>
 
-    <!-- Toast Notification Element -->
     <div id="toast" class="toast"></div>
 
     <script>
-        // ===== CONFIGURATION =====
         const SUPABASE_URL = 'https://pdqkvyxufnprapkgsvxx.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkcWt2eXh1Zm5wcmFwa2dzdnh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMDE2MzAsImV4cCI6MjA3ODc3NzYzMH0.CFxmP1S8829joB6txKQ4bypp-Qr7SDHAg0P2Dgpti1k';
-
-        // ===== INITIALIZATION & DOM REFERENCES =====
         const { createClient } = supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let allData = {}; 
@@ -180,18 +134,18 @@
         const standardVoicesListDiv = document.getElementById('standard-voices-list');
         const userClientSelect = document.getElementById('user-client-select');
         const customVoiceClientSelect = document.getElementById('custom-voice-client-select');
-        const editClientModal = document.getElementById('edit-client-modal');
         const tabsContainer = document.getElementById('voices-tabs');
         const standardVoicesTab = document.getElementById('standard-voices-tab');
         const customVoicesTab = document.getElementById('custom-voices-tab');
+        const editClientModal = document.getElementById('edit-client-modal');
+        const editUserModal = document.getElementById('edit-user-modal');
+        const editVoiceModal = document.getElementById('edit-voice-modal');
 
-        // ===== UTILITY FUNCTIONS =====
         const showToast = (message, type = 'success') => {
             toastElement.textContent = message;
             toastElement.className = `toast show ${type}`;
             setTimeout(() => { toastElement.className = 'toast'; }, 3000);
         };
-        
         const openModal = (modalElement) => {
             modalElement.classList.remove('hidden');
             setTimeout(() => {
@@ -199,16 +153,12 @@
                 modalElement.querySelector('.modal-content').classList.add('open');
             }, 10);
         };
-
         const closeModal = (modalElement) => {
             modalElement.querySelector('.modal-overlay').classList.remove('open');
             modalElement.querySelector('.modal-content').classList.remove('open');
-            setTimeout(() => {
-                modalElement.classList.add('hidden');
-            }, 200);
+            setTimeout(() => { modalElement.classList.add('hidden'); }, 200);
         };
 
-        // ===== CORE LOGIC =====
         const checkUserSession = async () => {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
@@ -244,7 +194,6 @@
                 console.error(hasError);
                 return;
             }
-
             renderDashboard();
             populateClientSelects();
         };
@@ -260,33 +209,36 @@
         };
 
         const renderDashboard = () => {
-            standardVoicesListDiv.innerHTML = allData.stdVoices.length > 0
-                ? allData.stdVoices.map(v => `
-                    <div class="flex justify-between items-center py-1">
-                        <span>${v.display_order}. ${v.voice_name}</span>
-                        <button class="delete-btn text-red-500 text-xs" data-id="${v.id}" data-table="standard_voices">Excluir</button>
-                    </div>`).join('')
-                : '<p>Nenhuma voz padrão cadastrada.</p>';
+            standardVoicesListDiv.innerHTML = allData.stdVoices.map(v => `
+                <div class="flex justify-between items-center py-1">
+                    <span>${v.display_order}. ${v.voice_name}</span>
+                    <div class="flex items-center gap-3">
+                        <button class="edit-btn text-blue-400 hover:text-blue-300 text-xs" data-id="${v.id}" data-table="standard_voices">Editar</button>
+                        <button class="delete-btn text-red-500 hover:text-red-400 text-xs" data-id="${v.id}" data-table="standard_voices">Excluir</button>
+                    </div>
+                </div>`).join('') || '<p>Nenhuma voz padrão cadastrada.</p>';
 
-            if (allData.clients.length === 0) {
-                clientsListDiv.innerHTML = '<p class="text-gray-500">Nenhum cliente cadastrado.</p>';
-                return;
-            }
-
-            clientsListDiv.innerHTML = allData.clients.map(client => {
+            clientsListDiv.innerHTML = allData.clients.length === 0 ? '<p class="text-gray-500">Nenhum cliente cadastrado.</p>' : 
+                allData.clients.map(client => {
                 const clientUsers = allData.users.filter(u => u.client_id === client.id);
                 const clientCustomVoices = allData.customVoices.filter(v => v.client_id === client.id);
 
                 const usersHtml = clientUsers.map(u => `
                     <li class="flex justify-between items-center py-1">
                         <span>${u.user_name || 'Usuário sem nome'} - ID: ${u.user_telegram_id}</span>
-                        <button class="delete-btn text-red-500 text-xs" data-id="${u.id}" data-table="authorized_users">Excluir</button>
+                        <div class="flex items-center gap-3">
+                            <button class="edit-btn text-blue-400 hover:text-blue-300 text-xs" data-id="${u.id}" data-table="authorized_users">Editar</button>
+                            <button class="delete-btn text-red-500 hover:text-red-400 text-xs" data-id="${u.id}" data-table="authorized_users">Excluir</button>
+                        </div>
                     </li>`).join('') || '<li class="text-gray-500">Nenhum usuário</li>';
 
                 const voicesHtml = clientCustomVoices.map(v => `
                     <li class="flex justify-between items-center py-1">
                         <span>${v.voice_name}</span>
-                        <button class="delete-btn text-red-500 text-xs" data-id="${v.id}" data-table="custom_voices">Excluir</button>
+                        <div class="flex items-center gap-3">
+                            <button class="edit-btn text-blue-400 hover:text-blue-300 text-xs" data-id="${v.id}" data-table="custom_voices">Editar</button>
+                            <button class="delete-btn text-red-500 hover:text-red-400 text-xs" data-id="${v.id}" data-table="custom_voices">Excluir</button>
+                        </div>
                     </li>`).join('') || '<li class="text-gray-500">Nenhuma voz premium</li>';
 
                 return `
@@ -304,36 +256,19 @@
                             <svg class="w-6 h-6 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </div>
                     </div>
-                    <div class="accordion-content">
-                        <div class="border-t border-gray-600 pt-4 mt-4 mx-4 mb-4 space-y-4">
-                            <div><strong>Tema Gamma:</strong> ${client.gamma_theme_name}</div>
-                            <div>
-                                <h4 class="font-semibold text-gray-300 mb-2">Usuários Autorizados:</h4>
-                                <ul class="space-y-1">${usersHtml}</ul>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-gray-300 mb-2">Vozes Premium:</h4>
-                                <ul class="space-y-1">${voicesHtml}</ul>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="accordion-content"><div class="border-t border-gray-600 pt-4 mt-4 mx-4 mb-4 space-y-4"><div><strong>Tema Gamma:</strong> ${client.gamma_theme_name}</div><div><h4 class="font-semibold text-gray-300 mb-2">Usuários Autorizados:</h4><ul class="space-y-1">${usersHtml}</ul></div><div><h4 class="font-semibold text-gray-300 mb-2">Vozes Premium:</h4><ul class="space-y-1">${voicesHtml}</ul></div></div></div>
                 </div>`;
             }).join('');
         };
         
         const handleDelete = async (id, tableName) => {
-            const itemType = tableName === 'clients' ? 'cliente' : 'item';
-            if (!confirm(`Tem certeza que deseja excluir este ${itemType}? A ação não pode ser desfeita.`)) return;
-            
+            if (!confirm(`Tem certeza que deseja excluir este item? A ação não pode ser desfeita.`)) return;
             const { error } = await supabaseClient.from(tableName).delete().eq('id', id);
-            
             if (error) { showToast(`Erro ao excluir.`, 'error'); console.error(error); }
             else { showToast('Excluído com sucesso!'); await loadDashboardData(); }
         };
 
-        // ===== EVENT LISTENERS =====
         document.addEventListener('DOMContentLoaded', () => {
-            // Event Delegation for dynamic buttons
             document.body.addEventListener('click', (e) => {
                 const accordionHeader = e.target.closest('.accordion-header');
                 if (accordionHeader && !e.target.closest('button')) {
@@ -343,16 +278,45 @@
                     return;
                 }
                 
-                if (e.target.matches('.edit-btn') && e.target.dataset.table === 'clients') {
-                    const clientId = e.target.dataset.id;
-                    const client = allData.clients.find(c => c.id === clientId);
-                    if (client) {
-                        document.getElementById('edit-client-id').value = client.id;
-                        document.getElementById('edit-company-name').value = client.company_name;
-                        document.getElementById('edit-logo-url').value = client.logo_url;
-                        document.getElementById('edit-primary-color').value = client.primary_color_hex;
-                        document.getElementById('edit-gamma-theme-name').value = client.gamma_theme_name;
-                        openModal(editClientModal);
+                if (e.target.matches('.edit-btn')) {
+                    const id = e.target.dataset.id;
+                    const table = e.target.dataset.table;
+                    
+                    if (table === 'clients') {
+                        const client = allData.clients.find(c => c.id === id);
+                        if (client) {
+                            document.getElementById('edit-client-id').value = client.id;
+                            document.getElementById('edit-company-name').value = client.company_name;
+                            document.getElementById('edit-logo-url').value = client.logo_url;
+                            document.getElementById('edit-primary-color').value = client.primary_color_hex;
+                            document.getElementById('edit-gamma-theme-name').value = client.gamma_theme_name;
+                            openModal(editClientModal);
+                        }
+                    } else if (table === 'authorized_users') {
+                        const user = allData.users.find(u => u.id === id);
+                        if(user) {
+                           document.getElementById('edit-user-id').value = user.id;
+                           document.getElementById('edit-user-name').value = user.user_name;
+                           document.getElementById('edit-user-telegram-id').value = user.user_telegram_id;
+                           openModal(editUserModal);
+                        }
+                    } else if (table === 'standard_voices' || table === 'custom_voices') {
+                        const voiceSource = table === 'standard_voices' ? allData.stdVoices : allData.customVoices;
+                        const voice = voiceSource.find(v => v.id == id); // Use '==' for serial vs uuid
+                        const orderContainer = document.getElementById('edit-voice-order-container');
+                        if (voice) {
+                           document.getElementById('edit-voice-id').value = voice.id;
+                           document.getElementById('edit-voice-table').value = table;
+                           document.getElementById('edit-voice-name').value = voice.voice_name;
+                           document.getElementById('edit-voice-id-field').value = voice.voice_id;
+                           if (table === 'standard_voices') {
+                               document.getElementById('edit-display-order').value = voice.display_order;
+                               orderContainer.classList.remove('hidden');
+                           } else {
+                               orderContainer.classList.add('hidden');
+                           }
+                           openModal(editVoiceModal);
+                        }
                     }
                     return;
                 }
@@ -363,36 +327,25 @@
                 }
             });
             
-            // Tab switching for voices
             tabsContainer.addEventListener('click', (e) => {
                 if (e.target.matches('.tab-button')) {
                     const tab = e.target.dataset.tab;
                     document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('text-white', 'border-cyan-400'));
                     e.target.classList.add('text-white', 'border-cyan-400');
-                    
-                    if (tab === 'standard') {
-                        standardVoicesTab.classList.remove('hidden');
-                        customVoicesTab.classList.add('hidden');
-                    } else {
-                        standardVoicesTab.classList.add('hidden');
-                        customVoicesTab.classList.remove('hidden');
-                    }
+                    standardVoicesTab.classList.toggle('hidden', tab !== 'standard');
+                    customVoicesTab.classList.toggle('hidden', tab !== 'custom');
                 }
             });
-            tabsContainer.querySelector('[data-tab="standard"]').classList.add('text-white', 'border-cyan-400'); // Initial active tab
+            tabsContainer.querySelector('[data-tab="standard"]').classList.add('text-white', 'border-cyan-400');
 
-            // Close modal
-            editClientModal.querySelector('.cancel-button').addEventListener('click', () => closeModal(editClientModal));
+            document.querySelectorAll('.modal-container').forEach(modal => {
+                modal.querySelector('.cancel-button').addEventListener('click', () => closeModal(modal));
+            });
             
-            // Login/Logout Handlers
             document.getElementById('login-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                const loginError = document.getElementById('login-error');
-                loginError.textContent = '';
-                const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-                if (error) { loginError.textContent = 'Credenciais inválidas.'; } 
+                const { error } = await supabaseClient.auth.signInWithPassword({ email: e.target.email.value, password: e.target.password.value });
+                if (error) { document.getElementById('login-error').textContent = 'Credenciais inválidas.'; } 
                 else { await checkUserSession(); }
             });
 
@@ -401,39 +354,55 @@
                 await checkUserSession();
             });
             
-            // Edit Form Handler
             document.getElementById('edit-client-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const id = document.getElementById('edit-client-id').value;
-                const updatedData = {
+                const { error } = await supabaseClient.from('clients').update({
                     company_name: document.getElementById('edit-company-name').value,
                     logo_url: document.getElementById('edit-logo-url').value || null,
                     primary_color_hex: document.getElementById('edit-primary-color').value,
                     gamma_theme_name: document.getElementById('edit-gamma-theme-name').value,
-                };
-                const { error } = await supabaseClient.from('clients').update(updatedData).eq('id', id);
+                }).eq('id', id);
                 if (error) { showToast('Erro ao atualizar.', 'error'); } 
-                else {
-                    showToast('Cliente atualizado!');
-                    closeModal(editClientModal);
-                    await loadDashboardData();
+                else { showToast('Cliente atualizado!'); closeModal(editClientModal); await loadDashboardData(); }
+            });
+            
+            document.getElementById('edit-user-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('edit-user-id').value;
+                const { error } = await supabaseClient.from('authorized_users').update({
+                    user_name: document.getElementById('edit-user-name').value || null,
+                    user_telegram_id: document.getElementById('edit-user-telegram-id').value,
+                }).eq('id', id);
+                if(error) { showToast('Erro ao atualizar.', 'error'); }
+                else { showToast('Usuário atualizado!'); closeModal(editUserModal); await loadDashboardData(); }
+            });
+            
+            document.getElementById('edit-voice-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('edit-voice-id').value;
+                const table = document.getElementById('edit-voice-table').value;
+                let updatedData = {
+                    voice_name: document.getElementById('edit-voice-name').value,
+                    voice_id: document.getElementById('edit-voice-id-field').value,
+                };
+                if(table === 'standard_voices') {
+                    updatedData.display_order = document.getElementById('edit-display-order').value;
                 }
+                const { error } = await supabaseClient.from(table).update(updatedData).eq('id', id);
+                if(error) { showToast('Erro ao atualizar.', 'error'); }
+                else { showToast('Voz atualizada!'); closeModal(editVoiceModal); await loadDashboardData(); }
             });
 
-            // Add Forms Handler (using name attributes)
             const setupAddForm = (formId, tableName, successMsg) => {
                 document.getElementById(formId).addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const form = e.target;
                     const formData = new FormData(form);
                     const record = Object.fromEntries(formData.entries());
-                    
-                    for (const key in record) { // Convert empty strings to null
-                        if (record[key] === '') record[key] = null;
-                    }
-                    
+                    for (const key in record) { if (record[key] === '') record[key] = null; }
                     const { error } = await supabaseClient.from(tableName).insert([record]);
-                    if(error) { showToast(`Erro ao salvar. Verifique se todos os campos obrigatórios estão preenchidos.`, 'error'); console.error(error); }
+                    if(error) { showToast(`Erro ao salvar.`, 'error'); console.error(error); }
                     else { showToast(successMsg); form.reset(); await loadDashboardData(); }
                 });
             };
@@ -443,7 +412,6 @@
             setupAddForm('add-standard-voice-form', 'standard_voices', 'Voz padrão salva!');
             setupAddForm('add-custom-voice-form', 'custom_voices', 'Voz premium salva!');
 
-            // Initial Load
             checkUserSession();
         });
     </script>
