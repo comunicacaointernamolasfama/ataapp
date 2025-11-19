@@ -85,7 +85,8 @@
                         <h2 class="text-xl font-semibold mb-4">Gerenciar Usuários</h2>
                         <form id="add-user-form" class="space-y-3">
                             <select name="client_id" id="user-client-select" class="input-style" required><option value="">Selecione um Cliente...</option></select>
-                            <input type="text" name="user_telegram_id" placeholder="ID do Telegram do Usuário" class="input-style" required>
+                            <!-- ***** CORREÇÃO AQUI ***** -->
+                            <input type="text" name="user_id" placeholder="ID do Usuário (Telegram ou WhatsApp)" class="input-style" required>
                             <input type="text" name="user_name" placeholder="Nome (Opcional)" class="input-style">
                             <button type="submit" class="w-full text-white font-bold py-2 px-4 rounded-md transition duration-300 bg-green-600 hover:bg-green-700">Adicionar Usuário</button>
                         </form>
@@ -120,7 +121,7 @@
     </div>
     
     <div id="edit-client-modal" class="hidden modal-container"><div class="modal-overlay"></div><div class="modal-content bg-gray-800 p-6 rounded-lg w-full max-w-md border border-gray-600"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-semibold">Editar Cliente</h2><button class="close-modal-btn text-2xl leading-none text-gray-400 hover:text-white">&times;</button></div><form id="edit-client-form" class="space-y-4"><input type="hidden" id="edit-client-id"><div><label for="edit-company-name" class="block text-sm font-medium text-gray-300 mb-1">Nome da Empresa</label><input type="text" id="edit-company-name" class="input-style" required></div><div><label for="edit-logo-url" class="block text-sm font-medium text-gray-300 mb-1">URL da Logo</label><input type="url" id="edit-logo-url" class="input-style"></div><div><label for="edit-gamma-theme-name" class="block text-sm font-medium text-gray-300 mb-1">Nome do Tema na Gamma</label><input type="text" id="edit-gamma-theme-name" class="input-style" required></div><div class="flex items-center gap-4"><label class="text-sm">Cor Primária:</label><input type="color" id="edit-primary-color" class="bg-gray-700 rounded"></div><div class="flex justify-end gap-4 mt-6"><button type="button" class="cancel-button px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded transition">Cancelar</button><button type="submit" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 rounded transition">Salvar Alterações</button></div></form></div></div>
-    <div id="edit-user-modal" class="hidden modal-container"><div class="modal-overlay"></div><div class="modal-content bg-gray-800 p-6 rounded-lg w-full max-w-md border border-gray-600"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-semibold">Editar Usuário Autorizado</h2><button class="close-modal-btn text-2xl leading-none text-gray-400 hover:text-white">&times;</button></div><form id="edit-user-form" class="space-y-4"><input type="hidden" id="edit-user-id"><div><label for="edit-user-name" class="block text-sm font-medium text-gray-300 mb-1">Nome do Usuário</label><input type="text" id="edit-user-name" class="input-style"></div><div><label for="edit-user-telegram-id" class="block text-sm font-medium text-gray-300 mb-1">ID do Telegram</label><input type="text" id="edit-user-telegram-id" class="input-style" required></div><div class="flex justify-end gap-4 mt-6"><button type="button" class="cancel-button px-4 py-2 bg-gray-600 rounded">Cancelar</button><button type="submit" class="px-4 py-2 bg-cyan-600 rounded">Salvar Alterações</button></div></form></div></div>
+    <div id="edit-user-modal" class="hidden modal-container"><div class="modal-overlay"></div><div class="modal-content bg-gray-800 p-6 rounded-lg w-full max-w-md border border-gray-600"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-semibold">Editar Usuário Autorizado</h2><button class="close-modal-btn text-2xl leading-none text-gray-400 hover:text-white">&times;</button></div><form id="edit-user-form" class="space-y-4"><input type="hidden" id="edit-user-id"><div><label for="edit-user-name" class="block text-sm font-medium text-gray-300 mb-1">Nome do Usuário</label><input type="text" id="edit-user-name" class="input-style"></div><div><label for="edit-user-id-field" class="block text-sm font-medium text-gray-300 mb-1">ID do Usuário</label><input type="text" id="edit-user-id-field" class="input-style" required></div><div class="flex justify-end gap-4 mt-6"><button type="button" class="cancel-button px-4 py-2 bg-gray-600 rounded">Cancelar</button><button type="submit" class="px-4 py-2 bg-cyan-600 rounded">Salvar Alterações</button></div></form></div></div>
     <div id="edit-voice-modal" class="hidden modal-container"><div class="modal-overlay"></div><div class="modal-content bg-gray-800 p-6 rounded-lg w-full max-w-md border border-gray-600"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-semibold">Editar Voz</h2><button class="close-modal-btn text-2xl leading-none text-gray-400 hover:text-white">&times;</button></div><form id="edit-voice-form" class="space-y-4"><input type="hidden" id="edit-voice-id"><input type="hidden" id="edit-voice-table"><div><label for="edit-voice-name" class="block text-sm font-medium text-gray-300 mb-1">Nome da Voz</label><input type="text" id="edit-voice-name" class="input-style" required></div><div><label for="edit-voice-id-field" class="block text-sm font-medium text-gray-300 mb-1">ID da Voz (ElevenLabs)</label><input type="text" id="edit-voice-id-field" class="input-style" required></div><div id="edit-voice-order-container" class="hidden"><label for="edit-display-order" class="block text-sm font-medium text-gray-300 mb-1">Ordem de Exibição</label><input type="number" id="edit-display-order" class="input-style"></div><div class="flex justify-end gap-4 mt-6"><button type="button" class="cancel-button px-4 py-2 bg-gray-600 rounded">Cancelar</button><button type="submit" class="px-4 py-2 bg-cyan-600 rounded">Salvar Alterações</button></div></form></div></div>
 
     <div id="toast" class="toast"></div>
@@ -231,7 +232,8 @@
 
                 const usersHtml = clientUsers.map(u => `
                     <li class="flex justify-between items-center py-1">
-                        <span>${u.user_name || 'Usuário sem nome'} - ID: ${u.user_telegram_id}</span>
+                        <!-- ***** CORREÇÃO AQUI ***** -->
+                        <span>${u.user_name || 'Usuário sem nome'} - ID: ${u.user_id}</span>
                         <div class="flex items-center gap-3">
                             <button class="edit-btn text-blue-400 hover:text-blue-300 text-xs" data-id="${u.id}" data-table="authorized_users">Editar</button>
                             <button class="delete-btn text-red-500 hover:text-red-400 text-xs" data-id="${u.id}" data-table="authorized_users">Excluir</button>
@@ -304,9 +306,10 @@
                     } else if (table === 'authorized_users') {
                         const user = allData.users.find(u => u.id === id);
                         if(user) {
+                           // ***** CORREÇÃO AQUI *****
                            document.getElementById('edit-user-id').value = user.id;
                            document.getElementById('edit-user-name').value = user.user_name;
-                           document.getElementById('edit-user-telegram-id').value = user.user_telegram_id;
+                           document.getElementById('edit-user-id-field').value = user.user_id;
                            openModal(editUserModal);
                         }
                     } else if (table === 'standard_voices' || table === 'custom_voices') {
@@ -379,11 +382,12 @@
             document.getElementById('edit-user-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const id = document.getElementById('edit-user-id').value;
+                // ***** CORREÇÃO AQUI *****
                 const { error } = await supabaseClient.from('authorized_users').update({
                     user_name: document.getElementById('edit-user-name').value || null,
-                    user_telegram_id: document.getElementById('edit-user-telegram-id').value,
+                    user_id: document.getElementById('edit-user-id-field').value,
                 }).eq('id', id);
-                if(error) { showToast('Erro ao atualizar.', 'error'); }
+                if(error) { showToast('Erro ao atualizar.', 'error'); console.error(error); }
                 else { showToast('Usuário atualizado!'); closeModal(editUserModal); await loadDashboardData(); }
             });
             
